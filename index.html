@@ -1,22 +1,23 @@
 <html>
 
-
 <head>
 	<link rel="stylesheet" href="bz.var.ru/resizable.css" type="text/css" />
-</head>
-
-<body>
+	
 	<script src="js/jcalc.js" type="text/javascript"></script>
 	<script src="js/jcalc.ui.js" type="text/javascript"></script>
 	<script src="bz.var.ru/resizable.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<style>h2 { text-align: center; }</style>
+	<h2>JCalc</h2>
+	<table id='worksheet' class='resizable' cellspacing='0'/>
 	<script type="text/javascript">
-		function setupApp() {
-			fillTable('worksheet', 50, 50);
+		window.onload = function() {
+			fillTable('worksheet', 100, 50);
+			ResizableColumns();
 		}
 	</script>
-
-	<table id='worksheet' class='resizable'/>
-	<script>window.onload=setupApp();</script>
 </body>
 
 </html>

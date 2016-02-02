@@ -210,12 +210,7 @@ function ResizableColumns() {
 		}
 	}
 }
-// init tables
-try {
-	window.addEventListener('load', ResizableColumns, false);
-} catch(e) {
-	window.onload = ResizableColumns;
-}
+
 
 //============================================================
 //
