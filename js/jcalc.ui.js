@@ -1,7 +1,31 @@
+function CellKeyListener(table, row, col) {
+	return function(e) {
+		var cellText = table.rows[row].cells[col].innerHTML;
+		if (cellText != '<br>')
+			return; // cell contains text
+		var code = e.keyCode ? e.keyCode : e.which;
+		switch (code) {
+		case 37: // LEFT
+			table.rows[row].cells[col - 1].focus();
+			break;
+		case 38: // UP
+			table.rows[row - 1].cells[col].focus();
+			break;
+		case 39: // RIGHT
+			table.rows[row].cells[col + 1].focus();
+			break;
+		case 13: // ENTER
+		case 40: // DOWN
+			table.rows[row + 1].cells[col].focus();
+			break;
+		}
+	}
+}
+
 // Fills the table of the given id with cells
 function fillTable(id, rows, cols) {
 	var body = document.body;
-	var table = document.getElementById(id);
+	var table = document.getElementById(id)
 	table.style.width = '300%';
 	
 	function setHeaderCellStyle(cell) {
@@ -23,7 +47,8 @@ function fillTable(id, rows, cols) {
 				cell.innerHTML = i;
 			} else {
 				cell.style.border = '1px solid LightGray';
-				cell.setAttribute('onClick', 'editCell();');
+				cell.setAttribute('contenteditable', 'true');
+				cell.onkeypress = CellKeyListener(table, i, j);
 			}
 		}
 	}
