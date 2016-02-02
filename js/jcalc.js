@@ -2,10 +2,15 @@
 function Cell() {
     "use strict"
     
-	this.value = null;
-	this.formula = null;
-	this.valueCalcRun = 0;
-	this.underCalc = false;
+    this.reset = function() {
+        this.userInput = null;
+        this.value = null;
+        this.formula = null;
+        this.valueCalcRun = 0;
+        this.underCalc = false;
+    }
+    
+    this.reset();
 }
 
 // Sheet ctor
@@ -27,12 +32,18 @@ function Sheet() {
         return res;
     }
     
-    this.value = function(r, c) {
+    this.value = function(row, col) {
         "use strict"
     
-        var cell = this.cells[r][c];
-        if (cell == null) return null;
-        if (cell.underCalc) return this.error("#REF!", "Circular reference detected!");
+        var cell = this.cells[row][col];
+        if (cell == null) {
+            return null;
+        }
+        
+        if (cell.underCalc) {
+            return this.error("#REF!", "Circular reference detected!");
+        }
+        
         if (cell.valueCalcRun < this.currCalcRun && cell.formula != null) {
             cell.underCalc = true;
             cell.valueCalcRun = this.currCalcRun;
@@ -42,7 +53,58 @@ function Sheet() {
         
         return cell.value;
     }
+    
+    this.recalc = function() {
+        "use strict"
+    
+        // Increment the current calc run.
+        this.currCalcRun++;
+        
+        for (var row = 0; row < this.rowCount; row++) {
+            for (var col = 0; col < this.colCount; col++) {
+                var cell = this.cells[row][col]; 
+                if (cell != null && cell.formula != null) {
+                    cell.value = cell.formula();
+                }
+            }
+        }
+    }
+    
+    this.parseUserInput = function(row, col, userInput) {
+        "use strict"
+    
+        // Ensure the cell is initialized/reset.
+        var cell = this.cells[row][col];
+        if (cell == null) {
+            this.cells[row][col] = new Cell();
+            cell = this.cells[row][col];
+        }
+        else {
+            cell.reset();
+        }
+        
+        cell.userInput = userInput;
+        
+        if (typeof userInput == "string") {
+            userInput = userInput.trim();
+            if (userInput.charAt(0) == "=") {
+                cell.formula = new Function(userInput.substring(1));
+            }
+        }
+        
+        // If the input wasn't a formula, it must be a value. 
+        if (cell.formula == null) {
+            cell.value = userInput;
+        }
+        
+        // Recalc the sheet whenever a cell changes.
+        this.recalc();
+    }
 }
 
 var sheet = new Sheet();
 
+// Shortcut
+function val(r, c) {
+    return sheet.value(r, c);
+}
