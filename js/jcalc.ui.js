@@ -1,11 +1,20 @@
-function afterRecalc(table) {
+function redraw(table) {
 	for (var i = 0; i < sheet.rowCount; i++) {
 		for (var j = 0; j < sheet.colCount; j++) {
-			table.rows[i].cells[j].innerText = sheet.value(i, j);
+			table.rows[i].cells[j].innerHTML = sheet.value(i, j);
 		}
 	}
 }
 
+function CellOnClick(table, row, col) {
+	return function(e) {
+		var userText = window.prompt('enter value', '');
+		sheet.parseUserInput(row, col, userText);
+		redraw(table);
+	}
+}
+
+/*
 function CellKeyListener(table, row, col) {
 	return function(e) {
 		var code = e.keyCode ? e.keyCode : e.which;
@@ -36,6 +45,7 @@ function CellKeyListener(table, row, col) {
 		}
 	}
 }
+*/
 
 // Fills the table of the given id with cells
 function fillTable(id, rows, cols) {
@@ -56,14 +66,15 @@ function fillTable(id, rows, cols) {
 				cell.style.backgroundColor = 'Black';
 			} else if (i == 0) {
 				setHeaderCellStyle(cell);
-				cell.innerHTML = j;
+				cell.innerHTML = j - 1;
 			} else if (j == 0) {
 				setHeaderCellStyle(cell);
-				cell.innerHTML = i;
+				cell.innerHTML = i - 1;
 			} else {
 				cell.style.border = '1px solid LightGray';
-				cell.setAttribute('contenteditable', 'true');
-				cell.onkeydown = CellKeyListener(table, i, j);
+				cell.onclick = CellOnClick(table, i, j);
+				//cell.setAttribute('contenteditable', 'true');
+				//cell.onkeypress = CellKeyListener(table, i, j);
 			}
 		}
 	}

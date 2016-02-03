@@ -26,7 +26,11 @@ function Sheet() {
     for (var i = 0; i < this.rowCount; i++) {
         this.cells[i] = new Array(this.colCount);
     }
-    
+	
+	this.isNull = function(x) {
+		return (x == null || typeof x == 'undefined');
+	}
+	
     this.error = function(res, msg) {
         alert(msg);
         return res;
@@ -36,19 +40,19 @@ function Sheet() {
         "use strict"
     
         var cell = this.cells[row][col];
-        if (cell == null) {
-            return null;
+        if (this.isNull(cell)) {
+            return '';
         }
         
         if (cell.underCalc) {
             return this.error("#REF!", "Circular reference detected!");
         }
         
-        if (cell.valueCalcRun < this.currCalcRun && cell.formula != null) {
+        if (cell.valueCalcRun < this.currCalcRun && !this.isNull(cell.formula)) {
             cell.underCalc = true;
             cell.valueCalcRun = this.currCalcRun;
             cell.value = cell.formula();
-            cell.underCalRun = false;
+            cell.underCalcRun = false;
         }
         
         return cell.value;
@@ -63,7 +67,7 @@ function Sheet() {
         for (var row = 0; row < this.rowCount; row++) {
             for (var col = 0; col < this.colCount; col++) {
                 var cell = this.cells[row][col]; 
-                if (cell != null && cell.formula != null) {
+                if (!this.isNull(cell) && !this.isNull(cell.formula) {
                     cell.value = cell.formula();
                 }
             }
@@ -72,11 +76,10 @@ function Sheet() {
     
     this.parseUserInput = function(row, col, userInput) {
         "use strict"
-		window.alert(userInput);
-    
+		
         // Ensure the cell is initialized/reset.
         var cell = this.cells[row][col];
-        if (cell == null) {
+        if (this.isNull(cell)) {
             this.cells[row][col] = new Cell();
             cell = this.cells[row][col];
         }
@@ -94,7 +97,7 @@ function Sheet() {
         }
         
         // If the input wasn't a formula, it must be a value. 
-        if (cell.formula == null) {
+        if (this.isNull(cell.formula)) {
             cell.value = userInput;
         }
         
