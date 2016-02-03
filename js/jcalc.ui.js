@@ -1,47 +1,21 @@
-function CellOnClick(table, row, col) {
+var currentCellRow = 0;
+var currentCellCol = 0;
+
+var formulaBar;
+
+function CellOnClick(cell, row, col) {
     "use strict"
-		
+
 	return function(e) {
         "use strict"
 		
-		var userText = window.prompt('enter value', '');
-		sheet.parseUserInput(row, col, userText);
-		populateTable(table);
+		cell.className += " selected";
+		currentCellRow = row;
+		currentCellCol = col;
+		formulaBar.value = sheet.getUserInput(row, col);
+		formulaBar.focus();
 	}
 }
-
-/*
-function CellKeyListener(table, row, col) {
-	return function(e) {
-		var code = e.keyCode ? e.keyCode : e.which;
-		var cell = table.rows[row].cells[col];
-		
-		if (code === 13) { // ENTER
-			var regex = new RegExp('<br>', 'g');
-			sheet.parseUserInput(row, col, cell.innerHTML.replace(regex, ""));
-			afterRecalc(table);
-			table.rows[row + 1].cells[col].focus();
-			e.stopPropagation();
-		}
-		
-		// Arrow keys
-		switch (code) {
-		case 37: // LEFT
-			table.rows[row].cells[col - 1].focus();
-			break;
-		case 38: // UP
-			table.rows[row - 1].cells[col].focus();
-			break;
-		case 39: // RIGHT
-			table.rows[row].cells[col + 1].focus();
-			break;
-		case 40: // DOWN
-			table.rows[row + 1].cells[col].focus();
-			break;
-		}
-	}
-}
-*/
 
 // Populates the given existing table with values.
 function populateTable(table) {
@@ -80,9 +54,7 @@ function drawTable(table) {
 				cell.innerHTML = i - 1;
 			} else {
 				cell.style.border = '1px solid LightGray';
-				cell.onclick = CellOnClick(table, i - 1, j - 1);
-				//cell.setAttribute('contenteditable', 'true');
-				//cell.onkeypress = CellKeyListener(table, i, j);
+				cell.onclick = CellOnClick(cell, i - 1, j - 1);
 			}
 		}
 	}
@@ -92,14 +64,22 @@ function editCell() {
 	window.alert('edit cell');
 }
 
-function startApp(tableId) {
+function startApp(tableId, formulaBarId) {
     "use strict"
-		
-	var table = document.getElementById(tableId)
+
+	var table = document.getElementById(tableId);
 	table.style.width = '300%';
     document.body.appendChild(table);
-    
+
+	formulaBar = document.getElementById(formulaBarId);
+
+	formulaBar.addEventListener("keydown", function(e) {
+		if (e.keyCode == 13) { // ENTER
+			sheet.parseUserInput(currentCellRow, currentCellCol, formulaBar.value);
+			populateTable(table);
+		}
+	}, false);
+
     drawTable(table);
-    
     ResizableColumns();
 }

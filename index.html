@@ -2,6 +2,7 @@
 
 <head>
 	<link rel="stylesheet" href="bz.var.ru/resizable.css" type="text/css" />
+	<link rel="stylesheet" href="css/jcalc.ui.css" type="text/css" />
 	
 	<script src="bz.var.ru/resizable.js" type="text/javascript"></script>
 	<script src="js/jcalc.js" type="text/javascript"></script>
@@ -9,9 +10,10 @@
 	<script src="js/jcalc.lib.js" type="text/javascript"></script>
 </head>
 
-<body onload="startApp('worksheet')">
-	<style>h2 { text-align: center; }</style>
+<body onload="startApp('worksheet', 'formulaBar')">
 	<h2>JCalc</h2>
+	<input id="formulaBar" type="text" size="50"/>
+	<br/>
 	<table id='worksheet' class='resizable' cellspacing='0'/>
 </body>
 

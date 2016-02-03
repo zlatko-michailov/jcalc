@@ -18,7 +18,7 @@ function Sheet() {
     "use strict"
 
     this.rowCount = 100;
-    this.colCount = 50
+    this.colCount = 50;
     this.currCalcRun = 0;
     
     // Initialize the rows and coilumns but not each cell. 
@@ -57,6 +57,13 @@ function Sheet() {
         
         return cell.value;
     }
+	
+	this.getUserInput = function(row, col) {
+		var cell = this.cells[row][col];
+		if (this.isNull(cell))
+			return '';
+		else return cell.userInput;
+	}
     
     this.recalc = function() {
         "use strict"
@@ -82,8 +89,7 @@ function Sheet() {
         if (this.isNull(cell)) {
             this.cells[row][col] = new Cell();
             cell = this.cells[row][col];
-        }
-        else {
+        } else {
             cell.reset();
         }
         
