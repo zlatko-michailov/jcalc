@@ -72,6 +72,7 @@ function Sheet() {
     
     this.parseUserInput = function(row, col, userInput) {
         "use strict"
+		window.alert(userInput);
     
         // Ensure the cell is initialized/reset.
         var cell = this.cells[row][col];
@@ -88,7 +89,7 @@ function Sheet() {
         if (typeof userInput == "string") {
             userInput = userInput.trim();
             if (userInput.charAt(0) == "=") {
-                cell.formula = new Function(userInput.substring(1));
+                cell.formula = new Function("return " + userInput.substring(1));
             }
         }
         

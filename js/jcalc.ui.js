@@ -1,9 +1,25 @@
+function afterRecalc(table) {
+	for (var i = 0; i < sheet.rowCount; i++) {
+		for (var j = 0; j < sheet.colCount; j++) {
+			table.rows[i].cells[j].innerText = sheet.value(i, j);
+		}
+	}
+}
+
 function CellKeyListener(table, row, col) {
 	return function(e) {
-		var cellText = table.rows[row].cells[col].innerHTML;
-		if (cellText != '<br>')
-			return; // cell contains text
 		var code = e.keyCode ? e.keyCode : e.which;
+		var cell = table.rows[row].cells[col];
+		
+		if (code === 13) { // ENTER
+			var regex = new RegExp('<br>', 'g');
+			sheet.parseUserInput(row, col, cell.innerHTML.replace(regex, ""));
+			afterRecalc(table);
+			table.rows[row + 1].cells[col].focus();
+			e.stopPropagation();
+		}
+		
+		// Arrow keys
 		switch (code) {
 		case 37: // LEFT
 			table.rows[row].cells[col - 1].focus();
@@ -14,7 +30,6 @@ function CellKeyListener(table, row, col) {
 		case 39: // RIGHT
 			table.rows[row].cells[col + 1].focus();
 			break;
-		case 13: // ENTER
 		case 40: // DOWN
 			table.rows[row + 1].cells[col].focus();
 			break;
@@ -48,7 +63,7 @@ function fillTable(id, rows, cols) {
 			} else {
 				cell.style.border = '1px solid LightGray';
 				cell.setAttribute('contenteditable', 'true');
-				cell.onkeypress = CellKeyListener(table, i, j);
+				cell.onkeydown = CellKeyListener(table, i, j);
 			}
 		}
 	}
