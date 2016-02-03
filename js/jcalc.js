@@ -41,7 +41,7 @@ function Sheet() {
     
         var cell = this.cells[row][col];
         if (this.isNull(cell)) {
-            return '';
+            return null;
         }
         
         if (cell.underCalc) {
@@ -107,8 +107,3 @@ function Sheet() {
 }
 
 var sheet = new Sheet();
-
-// Shortcut
-function val(r, c) {
-    return sheet.value(r, c);
-}

@@ -1,16 +1,12 @@
-function redraw(table) {
-	for (var i = 0; i < sheet.rowCount; i++) {
-		for (var j = 0; j < sheet.colCount; j++) {
-			table.rows[i].cells[j].innerHTML = sheet.value(i, j);
-		}
-	}
-}
-
 function CellOnClick(table, row, col) {
+    "use strict"
+		
 	return function(e) {
+        "use strict"
+		
 		var userText = window.prompt('enter value', '');
 		sheet.parseUserInput(row, col, userText);
-		redraw(table);
+		populateTable(table);
 	}
 }
 
@@ -47,20 +43,33 @@ function CellKeyListener(table, row, col) {
 }
 */
 
-// Fills the table of the given id with cells
-function fillTable(id, rows, cols) {
-	var body = document.body;
-	var table = document.getElementById(id)
-	table.style.width = '300%';
-	
+function populateTable(table) {
+    "use strict"
+		
+	for (var i = 0; i < sheet.rowCount; i++) {
+		var row = table.rows[i + 1];
+		for (var j = 0; j < sheet.colCount; j++) {
+			var cell = row.cells[j + 1];
+            var val = sheet.value(i, j);
+            if (val != null) {
+                cell.innerHTML = val; 
+            }
+        }
+	}
+}
+
+// Redraws the table of the given id with cells
+function drawTable(table) {
+    "use strict"
+		
 	function setHeaderCellStyle(cell) {
 		cell.style.backgroundColor = 'LightGray';
 		cell.style.border = '1px solid Gray';
 	}
 	
-	for (var i = 0; i <= rows; i++) {
+	for (var i = 0; i <= sheet.rowCount; i++) {
 		var row = table.insertRow();
-		for (var j = 0; j <= cols; j++) {
+		for (var j = 0; j <= sheet.colCount; j++) {
 			var cell = row.insertCell();
 			if (i == 0 && j == 0) {
 				cell.style.backgroundColor = 'Black';
@@ -72,16 +81,26 @@ function fillTable(id, rows, cols) {
 				cell.innerHTML = i - 1;
 			} else {
 				cell.style.border = '1px solid LightGray';
-				cell.onclick = CellOnClick(table, i, j);
+				cell.onclick = CellOnClick(table, i - 1, j - 1);
 				//cell.setAttribute('contenteditable', 'true');
 				//cell.onkeypress = CellKeyListener(table, i, j);
 			}
 		}
 	}
-	
-	body.appendChild(table);
 }
 
 function editCell() {
 	window.alert('edit cell');
+}
+
+function startApp(tableId) {
+    "use strict"
+		
+	var table = document.getElementById(tableId)
+	table.style.width = '300%';
+    document.body.appendChild(table);
+    
+    drawTable(table);
+    
+    ResizableColumns();
 }
