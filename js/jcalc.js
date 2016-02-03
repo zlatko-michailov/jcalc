@@ -52,7 +52,7 @@ function Sheet() {
             cell.underCalc = true;
             cell.valueCalcRun = this.currCalcRun;
             cell.value = cell.formula();
-            cell.underCalcRun = false;
+            cell.underCalc = false;
         }
         
         return cell.value;

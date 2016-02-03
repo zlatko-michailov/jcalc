@@ -43,6 +43,7 @@ function CellKeyListener(table, row, col) {
 }
 */
 
+// Populates the given existing table with values.
 function populateTable(table) {
     "use strict"
 		
@@ -51,14 +52,12 @@ function populateTable(table) {
 		for (var j = 0; j < sheet.colCount; j++) {
 			var cell = row.cells[j + 1];
             var val = sheet.value(i, j);
-            if (val != null) {
-                cell.innerHTML = val; 
-            }
+            cell.innerHTML = val != null ? val : ''; 
         }
 	}
 }
 
-// Redraws the table of the given id with cells
+// Initially draws the given table object.
 function drawTable(table) {
     "use strict"
 		
