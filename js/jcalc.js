@@ -17,8 +17,8 @@ function Cell() {
 function Sheet() {
     "use strict"
 
-    this.rowCount = 50;
-    this.colCount = 100
+    this.rowCount = 100;
+    this.colCount = 50
     this.currCalcRun = 0;
     
     // Initialize the rows and coilumns but not each cell. 
@@ -67,7 +67,7 @@ function Sheet() {
         for (var row = 0; row < this.rowCount; row++) {
             for (var col = 0; col < this.colCount; col++) {
                 var cell = this.cells[row][col]; 
-                if (!this.isNull(cell) && !this.isNull(cell.formula) {
+                if (!this.isNull(cell) && !this.isNull(cell.formula)) {
                     cell.value = cell.formula();
                 }
             }
