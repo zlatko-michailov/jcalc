@@ -2,21 +2,25 @@ var currentCellRow = 0;
 var currentCellCol = 0;
 
 var formulaBar;
+var table;
 
-function CellOnClick(cell, row, col) {
-    "use strict"
+function selectCell(row, col) {
+	"use strict"
 
-	return function(e) {
-        "use strict"
-		
-		cell.className += " selected";
-		currentCellRow = row;
-		currentCellCol = col;
-        
-        var userInput = sheet.getUserInput(row, col);
-		formulaBar.value = userInput != null ? userInput : ''; 
-		formulaBar.focus();
-	}
+	document.getElementById("currentCell").innerHTML = '(' + row + ', ' + col + ')';
+	// unselect previous cell
+	table.rows[currentCellRow + 1].cells[currentCellCol + 1].className -= " selected";
+	currentCellRow = row;
+	currentCellCol = col;
+	table.rows[row + 1].cells[col + 1].className += " selected";
+	var userInput = sheet.getUserInput(row, col);
+	formulaBar.value = userInput != null ? userInput : '';
+	formulaBar.focus();
+	formulaBar.select();
+}
+
+function CellOnClick(row, col) {
+	return function(e) { selectCell(row, col); }
 }
 
 // Populates the given existing table with values.
@@ -37,11 +41,6 @@ function populateTable(table) {
 function drawTable(table) {
     "use strict"
 		
-	function setHeaderCellStyle(cell) {
-		cell.style.backgroundColor = 'LightGray';
-		cell.style.border = '1px solid Gray';
-	}
-	
 	for (var i = 0; i <= sheet.rowCount; i++) {
 		var row = table.insertRow();
 		for (var j = 0; j <= sheet.colCount; j++) {
@@ -49,39 +48,36 @@ function drawTable(table) {
 			if (i == 0 && j == 0) {
 				cell.style.backgroundColor = 'Black';
 			} else if (i == 0) {
-				setHeaderCellStyle(cell);
+				cell.className += " header";
 				cell.innerHTML = j - 1;
 			} else if (j == 0) {
-				setHeaderCellStyle(cell);
+				cell.className += " header";
 				cell.innerHTML = i - 1;
 			} else {
-				cell.style.border = '1px solid LightGray';
-				cell.onclick = CellOnClick(cell, i - 1, j - 1);
+				cell.onclick = CellOnClick(i - 1, j - 1);
 			}
 		}
 	}
-}
-
-function editCell() {
-	window.alert('edit cell');
+	
+	table.rows[1].cells[1].className += " selected";
 }
 
 function startApp(tableId, formulaBarId) {
     "use strict"
 
-	var table = document.getElementById(tableId);
-	table.style.width = '300%';
-    document.body.appendChild(table);
-
+	// assign globals
+	table = document.getElementById(tableId);
 	formulaBar = document.getElementById(formulaBarId);
 
 	formulaBar.addEventListener("keydown", function(e) {
 		if (e.keyCode == 13) { // ENTER
 			sheet.parseUserInput(currentCellRow, currentCellCol, formulaBar.value);
 			populateTable(table);
+			selectCell(currentCellRow + 1, currentCellCol);
 		}
 	}, false);
 
     drawTable(table);
     ResizableColumns();
+	formulaBar.focus();
 }

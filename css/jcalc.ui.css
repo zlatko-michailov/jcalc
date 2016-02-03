@@ -1,5 +1,28 @@
-.selected {
+td {
+	border: 1px solid LightGray;
+}
+
+td.index {
+	width: 70;
+	border: none;
+	text-align: right;
+}
+
+td.formula {
+	border: none;
+}
+
+table.formulaRow {
+	border: none;
+}
+
+td.selected {
 	border: 2px solid black;
+}
+
+td.header {
+	background-color: LightGray;
+	border: 1px solid gray;
 }
 
 h2 { text-align: center; }
