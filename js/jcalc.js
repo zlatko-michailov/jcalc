@@ -88,17 +88,16 @@ function Sheet() {
         }
         
         cell.userInput = userInput;
-        
-        if (typeof userInput == "string") {
-            userInput = userInput.trim();
-            if (userInput.charAt(0) == "=") {
-                cell.formula = new Function("return " + userInput.substring(1));
-            }
+
+        // Check if the user input is a formula.        
+        userInput = userInput.trim();
+        if (userInput.charAt(0) == "=") {
+            cell.formula = new Function("return " + userInput.substring(1));
         }
         
         // If the input wasn't a formula, it must be a value. 
         if (this.isNull(cell.formula)) {
-            cell.value = userInput;
+            cell.value = eval(userInput);
         }
         
         // Recalc the sheet whenever a cell changes.
