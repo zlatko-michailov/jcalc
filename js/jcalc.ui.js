@@ -12,7 +12,9 @@ function CellOnClick(cell, row, col) {
 		cell.className += " selected";
 		currentCellRow = row;
 		currentCellCol = col;
-		formulaBar.value = sheet.getUserInput(row, col);
+        
+        var userInput = sheet.getUserInput(row, col);
+		formulaBar.value = userInput != null ? userInput : ''; 
 		formulaBar.focus();
 	}
 }
@@ -25,7 +27,7 @@ function populateTable(table) {
 		var row = table.rows[i + 1];
 		for (var j = 0; j < sheet.colCount; j++) {
 			var cell = row.cells[j + 1];
-            var val = sheet.value(i, j);
+            var val = sheet.getValue(i, j);
             cell.innerHTML = val != null ? val : ''; 
         }
 	}

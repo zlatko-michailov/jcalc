@@ -36,11 +36,18 @@ function Sheet() {
         return res;
     }
     
-    this.value = function(row, col) {
+    this.getCell = function(row, col) {
         "use strict"
     
         var cell = this.cells[row][col];
-        if (this.isNull(cell)) {
+        return !this.isNull(cell) ? cell : null;
+    }
+    
+    this.getValue = function(row, col) {
+        "use strict"
+    
+        var cell = this.getCell(row, col);
+        if (cell == null) {
             return null;
         }
         
@@ -59,10 +66,8 @@ function Sheet() {
     }
 	
 	this.getUserInput = function(row, col) {
-		var cell = this.cells[row][col];
-		if (this.isNull(cell))
-			return '';
-		else return cell.userInput;
+		var cell = this.getCell(row, col);
+		return cell != null ? cell.userInput : null;
 	}
     
     this.recalc = function() {
@@ -89,7 +94,8 @@ function Sheet() {
         if (this.isNull(cell)) {
             this.cells[row][col] = new Cell();
             cell = this.cells[row][col];
-        } else {
+        }
+        else {
             cell.reset();
         }
         
@@ -98,12 +104,24 @@ function Sheet() {
         // Check if the user input is a formula.        
         userInput = userInput.trim();
         if (userInput.charAt(0) == "=") {
-            cell.formula = new Function("return " + userInput.substring(1));
+            try {
+                var formulaBody = userInput.substring(1);
+                cell.formula = new Function("return " + formulaBody);
+            }
+            catch(err) {
+                window.alert("Invalid formula: '" + formulaBody + "' - " + err);
+                cell.reset();
+            }
         }
-        
-        // If the input wasn't a formula, it must be a value. 
-        if (this.isNull(cell.formula)) {
-            cell.value = eval(userInput);
+        else {
+            try {
+                // Try to evaluate the input to get the actual type.
+                cell.value = eval(userInput);
+            }
+            catch(err) {
+                // If evaluation fails, treat the user input as a string literal. 
+                cell.value = userInput;
+            }
         }
         
         // Recalc the sheet whenever a cell changes.
