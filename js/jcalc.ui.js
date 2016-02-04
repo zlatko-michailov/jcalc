@@ -17,7 +17,7 @@ JCalc.prototype.UI.prototype.startApp = function(tableId, formulaBarId) {
 
 	this.formulaBar.addEventListener("keydown", function(e) {
 		if (e.keyCode == 13) { // ENTER
-			_jcalc.sheet.parseUserInput(_jcalc.ui.currentCellRow, _jcalc.ui.currentCellCol, _jcalc.ui.formulaBar.value);
+			_jcalc.currSheet.parseUserInput(_jcalc.ui.currentCellRow, _jcalc.ui.currentCellCol, _jcalc.ui.formulaBar.value);
 			_jcalc.ui.populateTable();
 			_jcalc.ui.selectCell(_jcalc.ui.currentCellRow + 1, _jcalc.ui.currentCellCol);
 		}
@@ -32,9 +32,9 @@ JCalc.prototype.UI.prototype.startApp = function(tableId, formulaBarId) {
 JCalc.prototype.UI.prototype.drawTable = function() {
     "use strict"
 		
-	for (var r = 0; r <= _jcalc.sheet.rowCount; r++) {
+	for (var r = 0; r <= _jcalc.currSheet.rowCount; r++) {
 		var row = this.table.insertRow();
-		for (var c = 0; c <= _jcalc.sheet.colCount; c++) {
+		for (var c = 0; c <= _jcalc.currSheet.colCount; c++) {
 			var cell = row.insertCell();
 			if (r == 0 && c == 0) {
 				cell.style.backgroundColor = 'Black';
@@ -56,11 +56,11 @@ JCalc.prototype.UI.prototype.drawTable = function() {
 JCalc.prototype.UI.prototype.populateTable = function() {
     "use strict"
 		
-	for (var r = 0; r < _jcalc.sheet.rowCount; r++) {
+	for (var r = 0; r < _jcalc.currSheet.rowCount; r++) {
 		var row = this.table.rows[r + 1];
-		for (var c = 0; c < _jcalc.sheet.colCount; c++) {
+		for (var c = 0; c < _jcalc.currSheet.colCount; c++) {
 			var cell = row.cells[c + 1];
-            var val = _jcalc.sheet.getValue(r, c);
+            var val = _jcalc.currSheet.getValue(r, c);
             cell.innerHTML = val != null ? val : ''; 
         }
 	}
@@ -81,7 +81,7 @@ JCalc.prototype.UI.prototype.selectCell = function(row, col) {
 	this.currentCellRow = row;
 	this.currentCellCol = col;
 	this.table.rows[row + 1].cells[col + 1].className += " selected";
-	var userInput = _jcalc.sheet.getUserInput(row, col);
+	var userInput = _jcalc.currSheet.getUserInput(row, col);
 	this.formulaBar.value = userInput != null ? userInput : '';
 	this.formulaBar.focus();
 	//formulaBar.select();
@@ -109,7 +109,7 @@ JCalc.prototype.UI.prototype.importLib = function(tableId) {
     td2.innerHTML = path;
     td2.className = "formula";
     
-    _jcalc.sheet.imports.push(path);
+    _jcalc.currSheet.imports.push(path);
 
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -123,7 +123,7 @@ JCalc.prototype.UI.prototype.removeLib = function(btn) {
 
     var tr = btn.parentNode.parentNode;
     var table = tr.parentNode;
-    _jcalc.sheet.imports.splice(tr.rowIndex, 1);
+    _jcalc.currSheet.imports.splice(tr.rowIndex, 1);
     table.deleteRow(tr.rowIndex);
 }
 

@@ -1,5 +1,5 @@
 var JCalc = function() {
-    this.sheet = new this.Sheet();
+    this.currSheet = new this.Sheet();
 };
 
 // Common methods
@@ -14,16 +14,6 @@ JCalc.prototype.error = function(res, msg) {
 
     alert(msg);
     return res;
-};
-
-JCalc.prototype.saveAsJSON = function() {
-    "use strict"
-
-    var uri = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this));
-    var a = document.getElementById("downloadAsJsonContainer");
-    a.setAttribute("href", uri);
-    a.setAttribute("download", "Sheet.json");
-    a.click();
 };
 
 // Sheet methods

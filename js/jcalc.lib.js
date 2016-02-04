@@ -1,9 +1,9 @@
 function value(row, col) {
-    return _jcalc.sheet.getValue(row, col);
+    return _jcalc.currSheet.getValue(row, col);
 }
 
 function cell(row, col) {
-	return _jcalc.sheet.ensureCell(row, col);
+	return _jcalc.currSheet.ensureCell(row, col);
 }
 
 function iterRange(row1, col1, row2, col2, callback) {
