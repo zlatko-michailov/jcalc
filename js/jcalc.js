@@ -20,6 +20,7 @@ function Sheet() {
     this.rowCount = 100;
     this.colCount = 50;
     this.currCalcRun = 0;
+    this.imports = [];
     
     // Initialize the rows and coilumns but not each cell. 
     this.cells = new Array(this.rowCount);
