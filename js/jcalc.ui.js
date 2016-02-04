@@ -16,7 +16,7 @@ function selectCell(row, col) {
 	var userInput = sheet.getUserInput(row, col);
 	formulaBar.value = userInput != null ? userInput : '';
 	formulaBar.focus();
-	formulaBar.select();
+	//formulaBar.select();
 }
 
 function CellOnClick(row, col) {
@@ -80,4 +80,44 @@ function startApp(tableId, formulaBarId) {
     drawTable(table);
     ResizableColumns();
 	formulaBar.focus();
+}
+
+function removeLib(btn) {
+    "use strict"
+
+    var tr = btn.parentNode.parentNode;
+    var table = tr.parentNode;
+    sheet.imports.splice(tr.rowIndex, 1);
+    table.deleteRow(tr.rowIndex);
+}
+
+function importLib(tableId) {
+    "use strict"
+
+    var path = window.prompt("Enter path to a Javascript file", "");
+	if (!path) return;
+    
+    var table = document.getElementById(tableId);
+    var tr = table.insertRow();
+    
+    var td1 = tr.insertCell();
+    td1.innerHTML = "&nbsp;";
+    td1.className = "index";
+    var btn = document.createElement("button");
+    btn.className = "icon";
+    btn.innerHTML = "-";
+    btn.onclick = function() { removeLib(this); };
+    td1.appendChild(btn);
+    
+    var td2 = tr.insertCell();
+    td2.innerHTML = path;
+    td2.className = "formula";
+    
+    sheet.imports.push(path);
+
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = path;
+    var head = document.getElementsByTagName("head")[0];    
+    head.appendChild(script);
 }

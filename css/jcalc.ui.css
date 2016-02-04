@@ -1,19 +1,19 @@
-td {
-	border: 1px solid LightGray;
+.formula {
+	border: none;
 }
 
-td.index {
+.index {
 	width: 70;
 	border: none;
 	text-align: right;
 }
 
-td.formula {
-	border: none;
+.icon {
+    font-family: Courier New, Courier, monospace;
+    font-size: x-small;
 }
-
-table.formulaRow {
-	border: none;
+td {
+	border: 1px solid LightGray;
 }
 
 td.selected {
