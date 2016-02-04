@@ -1,5 +1,6 @@
 var JCalc = function() {
     this.currSheet = new this.Sheet();
+	this.imports = [];
 };
 
 // Common methods
@@ -12,9 +13,27 @@ JCalc.prototype.isNull = function(x) {
 JCalc.prototype.error = function(res, msg) {
     "use strict"
 
-    alert(msg);
+    window.alert(msg);
     return res;
 };
+
+JCalc.prototype.saveAsJSON = function() {
+    "use strict"
+
+    var uri = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this));
+    var a = document.getElementById("downloadAsJsonContainer");
+    a.setAttribute("href", uri);
+    a.setAttribute("download", "Sheet.json");
+    a.click();
+};
+
+JCalc.prototype.loadFromJSON = function(json) {
+	"use strict"
+
+	var obj = JSON.parse(json);
+	this.imports = obj.imports;
+	this.currSheet.copyFromObj(obj.currSheet);
+}
 
 // Sheet methods
 JCalc.prototype.Sheet = function() {
@@ -23,14 +42,17 @@ JCalc.prototype.Sheet = function() {
     this.rowCount = 100;
     this.colCount = 50;
     this.currCalcRun = 0;
-    this.imports = [];
-    
-    // Initialize the rows and coilumns but not each cell. 
-    this.cells = new Array(this.rowCount);
+    this.initCellsArray();
+};
+
+JCalc.prototype.Sheet.prototype.initCellsArray = function() {
+	"use strict"
+	
+	this.cells = new Array(this.rowCount);
     for (var r = 0; r < this.rowCount; r++) {
         this.cells[r] = new Array(this.colCount);
     }
-};
+}
 
 JCalc.prototype.Sheet.prototype.recalc = function() {
     "use strict"
@@ -140,6 +162,23 @@ JCalc.prototype.Sheet.prototype.parseUserInput = function(row, col, userInput) {
     this.recalc();
 };
 
+JCalc.prototype.Sheet.prototype.copyFromObj = function(obj) {
+	this.rowCount = obj.rowCount;
+	this.colCount = obj.colCount;
+	this.currCalcRun = 0;
+	this.initCellsArray();
+	
+	// copy data from cells
+	for (var r = 0; r < this.rowCount; r++) {
+		for (var c = 0; c < this.colCount; c++) {
+			var cellObj = obj.cells[r][c];
+			if (!_jcalc.isNull(cellObj)) {
+				this.ensureCell(r, c).copyFromObj(cellObj);
+			}
+		}
+	}
+}
+
 // Cell methods
 JCalc.prototype.Sheet.prototype.Cell = function() {
     "use strict"
@@ -150,11 +189,19 @@ JCalc.prototype.Sheet.prototype.Cell = function() {
 JCalc.prototype.Sheet.prototype.Cell.prototype.reset = function() {
     "use strict"
     
-    this.userInput = null;
+	this.userInput = null;
     this.value = null;
     this.formula = null;
     this.valueCalcRun = 0;
     this.underCalc = false;
 };
+
+JCalc.prototype.Sheet.prototype.Cell.prototype.copyFromObj = function(obj) {
+	this.userInput = obj.userInput;
+	this.value = obj.value;
+	this.formula = obj.formula;
+	this.valueCalcRun = 0;
+	this.underCalc = false;
+}
 
 var _jcalc = new JCalc();

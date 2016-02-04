@@ -11,11 +11,12 @@
 </head>
 
 <body onload="_jcalc.ui.startApp('worksheet', 'formulaBar');">
+	<input type="file" id="selectedFile" style="display: none;" onchange="_jcalc.ui.loadFromJSON(this);"/>
     <table class="formula" width="70%">
         <tr>
             <td class="formula">
-                <a href="javascript:_jcalc.ui.importLib('imports');"><img class="icon" src="img/open16.png"/></a>
-                <a href="javascript:_jcalc.ui.importLib('imports');"><img class="icon" src="img/save16.png"/></a>
+                <a href="javascript:document.getElementById('selectedFile').click();"><img class="icon" src="img/open16.png"/></a>
+                <a href="javascript:_jcalc.ui.saveAsJSON();"><img class="icon" src="img/save16.png"/></a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="javascript:_jcalc.ui.importLib('imports');"><img class="icon" src="img/add16.png"/></a>
             </td>

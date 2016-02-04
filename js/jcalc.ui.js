@@ -113,7 +113,7 @@ JCalc.prototype.UI.prototype.importLib = function(tableId) {
     td2.innerHTML = path;
     td2.className = "formula";
     
-    _jcalc.currSheet.imports.push(path);
+    _jcalc.imports.push(path);
 
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -128,19 +128,29 @@ JCalc.prototype.UI.prototype.removeLib = function(aId) {
     var a = document.getElementById(aId);
     var tr = a.parentNode.parentNode;
     var table = tr.parentNode;
-    _jcalc.currSheet.imports.splice(tr.rowIndex, 1);
+    _jcalc.imports.splice(tr.rowIndex, 1);
     table.deleteRow(tr.rowIndex);
 }
 
 JCalc.prototype.UI.prototype.saveAsJSON = function() {
     "use strict"
 
-    var uri = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this));
+    var uri = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(_jcalc));
     var a = document.getElementById("downloadAsJsonContainer");
     a.setAttribute("href", uri);
     a.setAttribute("download", "Sheet.json");
     a.click();
 };
 
-_jcalc.ui = new _jcalc.UI();
+JCalc.prototype.UI.prototype.loadFromJSON = function(filePath) {
+	"use strict"
 
+	var reader = new window.FileReader();
+	reader.onload = function (e) {
+		_jcalc.loadFromJSON(e.target.result);
+		_jcalc.ui.populateTable();
+	};
+	reader.readAsText(filePath.files[0]);
+}
+
+_jcalc.ui = new _jcalc.UI();
