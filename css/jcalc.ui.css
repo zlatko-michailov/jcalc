@@ -1,3 +1,10 @@
+.title {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    font-size: x-large;
+    text-align: center;   
+}
+
 .formula {
 	border: none;
 }
@@ -11,7 +18,11 @@
 .icon {
     font-family: Courier New, Courier, monospace;
     font-size: x-small;
+    height: 20;
+    width: 20;
+    border: none;
 }
+
 td {
 	border: 1px solid LightGray;
 }

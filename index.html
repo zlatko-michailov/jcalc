@@ -11,15 +11,21 @@
 </head>
 
 <body onload="_jcalc.ui.startApp('worksheet', 'formulaBar');">
-    <h2>JCalc</h2>
+    <table class="formula" width="70%">
+        <tr>
+            <td class="formula">
+                <a href="javascript:_jcalc.ui.importLib('imports');"><img class="icon" src="img/open16.png"/></a>
+                <a href="javascript:_jcalc.ui.importLib('imports');"><img class="icon" src="img/save16.png"/></a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="javascript:_jcalc.ui.importLib('imports');"><img class="icon" src="img/add16.png"/></a>
+            </td>
+            <td class="formula title">
+                JCalc
+            </td>
+        </tr>
+    </table>
     
     <table id="imports" class="formula">
-    </table>
-    <table class="formula">
-        <tr>
-            <td class="index"><button class="icon" onclick="_jcalc.ui.importLib('imports');">+</button></td>
-            <td class="index">&nbsp;</td>
-        </tr>
     </table>
     <br />
     

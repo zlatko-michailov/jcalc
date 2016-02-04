@@ -95,15 +95,19 @@ JCalc.prototype.UI.prototype.importLib = function(tableId) {
     
     var table = document.getElementById(tableId);
     var tr = table.insertRow();
-    
+    var trIndex = table.rows.length - 1;
+
     var td1 = tr.insertCell();
     td1.innerHTML = "&nbsp;";
     td1.className = "index";
-    var btn = document.createElement("button");
-    btn.className = "icon";
-    btn.innerHTML = "-";
-    btn.onclick = function() { _jcalc.ui.removeLib(this); };
-    td1.appendChild(btn);
+    var a = document.createElement("a");
+    a.id = "import_" + trIndex;
+    a.href = "javascript: _jcalc.ui.removeLib('"+ a.id + "');";
+    var img = document.createElement("img");
+    img.className = "icon";
+    img.src = "img/remove16.png";
+    a.appendChild(img);
+    td1.appendChild(a);
     
     var td2 = tr.insertCell();
     td2.innerHTML = path;
@@ -118,10 +122,11 @@ JCalc.prototype.UI.prototype.importLib = function(tableId) {
     head.appendChild(script);
 }
 
-JCalc.prototype.UI.prototype.removeLib = function(btn) {
+JCalc.prototype.UI.prototype.removeLib = function(aId) {
     "use strict"
 
-    var tr = btn.parentNode.parentNode;
+    var a = document.getElementById(aId);
+    var tr = a.parentNode.parentNode;
     var table = tr.parentNode;
     _jcalc.currSheet.imports.splice(tr.rowIndex, 1);
     table.deleteRow(tr.rowIndex);
