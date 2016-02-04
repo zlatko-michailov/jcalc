@@ -12,12 +12,13 @@
 
 <body onload="startApp('worksheet', 'formulaBar')">
 	<h2>JCalc</h2>
-	<table class = "formulaRow">
+	<table class = "formulaRow" size="200%">
 		<tr><td id="currentCell" class="index">(0, 0)</td>
-		<td class="formula"><input id="formulaBar" type="text" size="80"/></td></tr>
+		<td class="formula"><input id="formulaBar" type="text" size="200"/></td></tr>
 	</table>
 	<br/>
 	<table id='worksheet' class='resizable' width="300%" cellspacing='0'/>
+	<a id="downloadAsJsonContainer" style="display:none" />
 </body>
 
 </html>

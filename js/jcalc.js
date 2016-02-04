@@ -31,6 +31,14 @@ function Sheet() {
 		return (x == null || typeof x == 'undefined');
 	}
 	
+	this.saveAsJson = function() {
+		var uri = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this));
+		var a = document.getElementById("downloadAsJsonContainer");
+		a.setAttribute("href", uri);
+		a.setAttribute("download", "Sheet.json");
+		a.click();
+	}
+	
     this.error = function(res, msg) {
         alert(msg);
         return res;
@@ -42,6 +50,15 @@ function Sheet() {
         var cell = this.cells[row][col];
         return !this.isNull(cell) ? cell : null;
     }
+	
+	this.ensureCell = function(row, col) {
+		var cell = this.cells[row][col];
+		if (this.isNull(cell)) {
+			cell = new Cell();
+			this.cells[row][col] = cell;
+		}
+		return cell;
+	}
     
     this.getValue = function(row, col) {
         "use strict"
@@ -58,8 +75,13 @@ function Sheet() {
         if (cell.valueCalcRun < this.currCalcRun && !this.isNull(cell.formula)) {
             cell.underCalc = true;
             cell.valueCalcRun = this.currCalcRun;
-            cell.value = cell.formula();
-            cell.underCalc = false;
+			try {
+				cell.value = cell.formula();
+			} catch (err) {
+				cell.value = this.error("#NAME?", "Invalid formula: '" + cell.userInput + "' - " + err);
+			} finally {
+				cell.underCalc = false;
+			}
         }
         
         return cell.value;
@@ -78,10 +100,7 @@ function Sheet() {
         
         for (var row = 0; row < this.rowCount; row++) {
             for (var col = 0; col < this.colCount; col++) {
-                var cell = this.cells[row][col]; 
-                if (!this.isNull(cell) && !this.isNull(cell.formula)) {
-                    cell.value = cell.formula();
-                }
+                this.getValue(row, col); // causes recalc
             }
         }
     }
@@ -104,8 +123,8 @@ function Sheet() {
         // Check if the user input is a formula.        
         userInput = userInput.trim();
         if (userInput.charAt(0) == "=") {
+			var formulaBody = userInput.substring(1);
             try {
-                var formulaBody = userInput.substring(1);
                 cell.formula = new Function("return " + formulaBody);
             }
             catch(err) {

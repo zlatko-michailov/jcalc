@@ -2,7 +2,11 @@ function value(row, col) {
     return sheet.getValue(row, col);
 }
 
-function range(row1, col1, row2, col2, callback) {
+function cell(row, col) {
+	return sheet.ensureCell(row, col);
+}
+
+function iterRange(row1, col1, row2, col2, callback) {
     "use strict"
     
     var r1 = Math.min(row1, row2);
@@ -15,6 +19,32 @@ function range(row1, col1, row2, col2, callback) {
             callback(value(r,c));
         }
     }
+}
+
+function fillRange(row1, col1, row2, col2, callback) {
+	"use strict"
+	
+	var r1 = Math.min(row1, row2);
+    var r2 = Math.max(row1, row2);
+    var c1 = Math.min(col1, col2);
+    var c2 = Math.max(col1, col2);
+	
+	var ret = null;
+	for (var r = r1; r <= r2; r++) {
+		for (var c = c1; c <= c2; c++) {
+			cell(r, c).value = callback(r, c);
+			if (r == 0 && c == 0)
+				ret = cell(r, c).value;
+		}
+	}
+	
+	return ret;
+}
+
+function clearRange(row1, col1, row2, col2) {
+	fillRange(row1, col1, row2, col2, function(r, c) {
+		cell(r, c).reset();
+	});
 }
 
 function count(row1, col1, row2, col2) {
@@ -54,7 +84,7 @@ function avg(row1, col1, row2, col2) {
 
 function min(row1, col1, row2, col2) {
     var currMin = null;
-    range(row1, col1, row2, col2, function(v) {
+    iterRange(row1, col1, row2, col2, function(v) {
        if (v != null && typeof v == "number") {
            if (currMin == null || v < currMin)
            currMin = v;
@@ -66,7 +96,7 @@ function min(row1, col1, row2, col2) {
 
 function max(row1, col1, row2, col2) {
     var currMax = null;
-    range(row1, col1, row2, col2, function(v) {
+    iterRange(row1, col1, row2, col2, function(v) {
        if (v != null && typeof v == "number") {
            if (currMax == null || currMax < v)
            currMax = v;
