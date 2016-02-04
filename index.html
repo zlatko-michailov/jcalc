@@ -7,17 +7,17 @@
     <script src="bz.var.ru/resizable.js" type="text/javascript"></script>
     <script src="js/jcalc.js" type="text/javascript"></script>
     <script src="js/jcalc.ui.js" type="text/javascript"></script>
-    <!--<script src="js/jcalc.lib.js" type="text/javascript"></script>-->
+    <script src="js/jcalc.lib.js" type="text/javascript"></script>
 </head>
 
-<body onload="startApp('worksheet', 'formulaBar')">
+<body onload="_jcalc.ui.startApp('worksheet', 'formulaBar');">
     <h2>JCalc</h2>
     
     <table id="imports" class="formula">
     </table>
     <table class="formula">
         <tr>
-            <td class="index"><button class="icon" onclick="importLib('imports')">+</button></td>
+            <td class="index"><button class="icon" onclick="_jcalc.ui.importLib('imports');">+</button></td>
             <td class="index">&nbsp;</td>
         </tr>
     </table>

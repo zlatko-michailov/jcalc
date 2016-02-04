@@ -1,97 +1,93 @@
-var currentCellRow = 0;
-var currentCellCol = 0;
+// Common UI methods
+JCalc.prototype.UI = function() {
+    "use strict"
 
-var formulaBar;
-var table;
+    this.currentCellRow = 0;
+    this.currentCellCol = 0;
+    this.formulaBar = null;
+    this.table = null;
+};
 
-function selectCell(row, col) {
-	"use strict"
+JCalc.prototype.UI.prototype.startApp = function(tableId, formulaBarId) {
+    "use strict"
 
-	document.getElementById("currentCell").innerHTML = '(' + row + ', ' + col + ')';
-	// unselect previous cell
-	table.rows[currentCellRow + 1].cells[currentCellCol + 1].className -= " selected";
-	currentCellRow = row;
-	currentCellCol = col;
-	table.rows[row + 1].cells[col + 1].className += " selected";
-	var userInput = sheet.getUserInput(row, col);
-	formulaBar.value = userInput != null ? userInput : '';
-	formulaBar.focus();
-	//formulaBar.select();
+	// Assign globals
+	this.table = document.getElementById(tableId);
+	this.formulaBar = document.getElementById(formulaBarId);
+
+	this.formulaBar.addEventListener("keydown", function(e) {
+		if (e.keyCode == 13) { // ENTER
+			_jcalc.sheet.parseUserInput(_jcalc.ui.currentCellRow, _jcalc.ui.currentCellCol, _jcalc.ui.formulaBar.value);
+			_jcalc.ui.populateTable();
+			_jcalc.ui.selectCell(_jcalc.ui.currentCellRow + 1, _jcalc.ui.currentCellCol);
+		}
+	}, false);
+
+    this.drawTable();
+    ResizableColumns();
+	this.formulaBar.focus();
 }
 
-function CellOnClick(row, col) {
-	return function(e) { selectCell(row, col); }
-}
 
-// Populates the given existing table with values.
-function populateTable(table) {
+JCalc.prototype.UI.prototype.drawTable = function() {
     "use strict"
 		
-	for (var i = 0; i < sheet.rowCount; i++) {
-		var row = table.rows[i + 1];
-		for (var j = 0; j < sheet.colCount; j++) {
-			var cell = row.cells[j + 1];
-            var val = sheet.getValue(i, j);
-            cell.innerHTML = val != null ? val : ''; 
-        }
-	}
-}
-
-// Initially draws the given table object.
-function drawTable(table) {
-    "use strict"
-		
-	for (var i = 0; i <= sheet.rowCount; i++) {
-		var row = table.insertRow();
-		for (var j = 0; j <= sheet.colCount; j++) {
+	for (var r = 0; r <= _jcalc.sheet.rowCount; r++) {
+		var row = this.table.insertRow();
+		for (var c = 0; c <= _jcalc.sheet.colCount; c++) {
 			var cell = row.insertCell();
-			if (i == 0 && j == 0) {
+			if (r == 0 && c == 0) {
 				cell.style.backgroundColor = 'Black';
-			} else if (i == 0) {
+			} else if (r == 0) {
 				cell.className += " header";
-				cell.innerHTML = j - 1;
-			} else if (j == 0) {
+				cell.innerHTML = c - 1;
+			} else if (c == 0) {
 				cell.className += " header";
-				cell.innerHTML = i - 1;
+				cell.innerHTML = r - 1;
 			} else {
-				cell.onclick = CellOnClick(i - 1, j - 1);
+				cell.onclick = this.CellOnClick(r - 1, c - 1);
 			}
 		}
 	}
 	
-	table.rows[1].cells[1].className += " selected";
-}
+	this.table.rows[1].cells[1].className += " selected";
+};
 
-function startApp(tableId, formulaBarId) {
+JCalc.prototype.UI.prototype.populateTable = function() {
     "use strict"
+		
+	for (var r = 0; r < _jcalc.sheet.rowCount; r++) {
+		var row = this.table.rows[r + 1];
+		for (var c = 0; c < _jcalc.sheet.colCount; c++) {
+			var cell = row.cells[c + 1];
+            var val = _jcalc.sheet.getValue(r, c);
+            cell.innerHTML = val != null ? val : ''; 
+        }
+	}
+};
 
-	// assign globals
-	table = document.getElementById(tableId);
-	formulaBar = document.getElementById(formulaBarId);
+JCalc.prototype.UI.prototype.CellOnClick = function(row, col) {
+	"use strict"
 
-	formulaBar.addEventListener("keydown", function(e) {
-		if (e.keyCode == 13) { // ENTER
-			sheet.parseUserInput(currentCellRow, currentCellCol, formulaBar.value);
-			populateTable(table);
-			selectCell(currentCellRow + 1, currentCellCol);
-		}
-	}, false);
+	return function(e) { _jcalc.ui.selectCell(row, col); }
+};
 
-    drawTable(table);
-    ResizableColumns();
-	formulaBar.focus();
-}
+JCalc.prototype.UI.prototype.selectCell = function(row, col) {
+	"use strict"
 
-function removeLib(btn) {
-    "use strict"
+	document.getElementById("currentCell").innerHTML = '(' + row + ', ' + col + ')';
+	// unselect previous cell
+	this.table.rows[this.currentCellRow + 1].cells[this.currentCellCol + 1].className -= " selected";
+	this.currentCellRow = row;
+	this.currentCellCol = col;
+	this.table.rows[row + 1].cells[col + 1].className += " selected";
+	var userInput = _jcalc.sheet.getUserInput(row, col);
+	this.formulaBar.value = userInput != null ? userInput : '';
+	this.formulaBar.focus();
+	//formulaBar.select();
+};
 
-    var tr = btn.parentNode.parentNode;
-    var table = tr.parentNode;
-    sheet.imports.splice(tr.rowIndex, 1);
-    table.deleteRow(tr.rowIndex);
-}
-
-function importLib(tableId) {
+JCalc.prototype.UI.prototype.importLib = function(tableId) {
     "use strict"
 
     var path = window.prompt("Enter path to a Javascript file", "");
@@ -106,14 +102,14 @@ function importLib(tableId) {
     var btn = document.createElement("button");
     btn.className = "icon";
     btn.innerHTML = "-";
-    btn.onclick = function() { removeLib(this); };
+    btn.onclick = function() { _jcalc.ui.removeLib(this); };
     td1.appendChild(btn);
     
     var td2 = tr.insertCell();
     td2.innerHTML = path;
     td2.className = "formula";
     
-    sheet.imports.push(path);
+    _jcalc.sheet.imports.push(path);
 
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -121,3 +117,25 @@ function importLib(tableId) {
     var head = document.getElementsByTagName("head")[0];    
     head.appendChild(script);
 }
+
+JCalc.prototype.UI.prototype.removeLib = function(btn) {
+    "use strict"
+
+    var tr = btn.parentNode.parentNode;
+    var table = tr.parentNode;
+    _jcalc.sheet.imports.splice(tr.rowIndex, 1);
+    table.deleteRow(tr.rowIndex);
+}
+
+JCalc.prototype.UI.prototype.saveAsJSON = function() {
+    "use strict"
+
+    var uri = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this));
+    var a = document.getElementById("downloadAsJsonContainer");
+    a.setAttribute("href", uri);
+    a.setAttribute("download", "Sheet.json");
+    a.click();
+};
+
+_jcalc.ui = new _jcalc.UI();
+

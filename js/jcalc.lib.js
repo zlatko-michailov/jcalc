@@ -1,9 +1,9 @@
 function value(row, col) {
-    return sheet.getValue(row, col);
+    return _jcalc.sheet.getValue(row, col);
 }
 
 function cell(row, col) {
-	return sheet.ensureCell(row, col);
+	return _jcalc.sheet.ensureCell(row, col);
 }
 
 function iterRange(row1, col1, row2, col2, callback) {
@@ -49,7 +49,7 @@ function clearRange(row1, col1, row2, col2) {
 
 function count(row1, col1, row2, col2) {
     var currCount = 0;
-    range(row1, col1, row2, col2, function(v) {
+    iterRange(row1, col1, row2, col2, function(v) {
        if (v != null) {
            currCount++;
        } 
@@ -60,7 +60,7 @@ function count(row1, col1, row2, col2) {
 
 function sum(row1, col1, row2, col2) {
     var currSum = 0;
-    range(row1, col1, row2, col2, function(v) {
+    iterRange(row1, col1, row2, col2, function(v) {
        if (v != null && typeof v == "number") {
            currSum += v;
        } 
@@ -72,7 +72,7 @@ function sum(row1, col1, row2, col2) {
 function avg(row1, col1, row2, col2) {
     var currSum = 0;
     var currCount = 0;
-    range(row1, col1, row2, col2, function(v) {
+    iterRange(row1, col1, row2, col2, function(v) {
        if (v != null && typeof v == "number") {
            currSum += v;
            currCount++;
