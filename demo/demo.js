@@ -25,8 +25,10 @@ function collatz(n) {
 function writeVector(r, c, vector, horiz) {
 	"use strict"
 	
-	for (var i = 0; i < vector.length; i++) {
-		if (horiz) cell(r, c + i).value = vector[i];
-		else cell(r + i, c).value = vector[i];
-	}
+	var r2 = horiz ? r : r + vector.length - 1;
+	var c2 = horiz ? c + vector.length - 1 : c;
+	var i = 0;
+	return fillRange(r, c, r2, c2, function(r,c) {
+		return vector[i++];
+	});
 }
